@@ -1,0 +1,1322 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% 美国大学生数学建模竞赛（MCM/ICM）论文模板
+%%% 来源网站：www.latexstudio.net
+%%% 中文注释：小嗷犬 blog.marquis.eu.org
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% code: 代码文件夹
+%%% figures: 图片文件夹
+%%% *.cls: LaTeX 格式文件
+%%% *.tex: LaTeX 文档文件
+%%% *.bib: Bib 引用文献源文件
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% 可能用到的网站
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% LaTeX公式编辑器：https://www.latexlive.com/
+%%% Diagram流程图绘制：https://www.drawio.com/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% 模板参数设置
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass{mcmthesis}  % 文档类型
+\mcmsetup{CTeX = false,   % 使用 CTeX 套装时，设置为 true
+        tcn = 2609232,   % 队伍控制号
+        problem = F,  % 选题
+        sheet = true,   % sheet页
+        titleinsheet = true,   % sheet页显示标题
+        keywordsinsheet = true,  % sheet页显示关键词
+        titlepage = false,   % 标题页
+        abstract = true  % 摘要
+        }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% 导入宏包和引用文献源
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{caption}
+\captionsetup[table]{labelfont=bf,labelsep=period,font=small}
+% ===================== Notation Table Packages =====================
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{ltablex}          % longtable + tabularx (cross-page)
+\usepackage{colortbl}
+\usepackage[table]{xcolor}    % 'table' enables rowcolor
+\usepackage{threeparttablex}  % notes for longtable
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+% ===== compact lists (recommended) =====
+\usepackage{enumitem}
+
+% 通用 itemize 间距（紧凑但不拥挤）
+\setlist[itemize]{topsep=2pt, itemsep=1pt, parsep=0pt, partopsep=0pt, leftmargin=1.4em}
+\setlist[enumerate]{topsep=2pt, itemsep=1pt, parsep=0pt, partopsep=0pt, leftmargin=1.6em}
+
+% 你如果想再紧一点：把 itemsep=0.5pt / topsep=1pt
+% 但建议先用上面的参数
+
+% 目录只显示到 \subsection（不显示 \subsubsection）
+\setcounter{tocdepth}{2}
+
+\keepXColumns % required by ltablex to keep X columns stable
+
+% ===================== Color Palette =====================
+% group header (always light gray)
+\definecolor{grphead}{RGB}{230, 236, 245}
+\definecolor{gA}{RGB}{248, 251, 255}
+\definecolor{gB}{RGB}{255, 255, 255}
+% ===================== Table Spacing (global, optional) =====================
+\renewcommand{\arraystretch}{1.12}
+\setlength{\tabcolsep}{4.2pt}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% 文档信息设置
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\author{\small Team 2609232}  % 作者，开启标题页才会显示
+\date{\today}  % 日期，开启标题页才会显示
+
+\memoto{MCM office}  % 建议书目标
+\memofrom{MCM Team 2609232}  % 建议书来源
+\memosubject{MCM}  % 建议书主题
+\memodate{\today}  % 建议书日期
+\usepackage{array}
+\usepackage[backend=biber, sorting=none]{biblatex}
+\addbibresource{ref.bib}
+\usepackage{enumitem}  % 加在 \newlist 之前！
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{titlesec}
+\titleformat{\paragraph}[hang]{\normalfont\bfseries\itshape}{}{0em}{}
+\titlespacing*{\paragraph}{0pt}{1.5ex plus 0.5ex minus 0.2ex}{1ex}
+\newlist{justification}{description}{1}
+\setlist[justification]{
+  leftmargin   = 0pt,      % 换行后正文也顶格
+  labelindent  = 0pt,      % 标签顶格
+  itemindent   = 0pt,
+  labelsep     = 0.5em,
+  nosep,
+  font = \normalfont\itshape
+}
+\definecolor{querycolor}{gray}{0.85}
+\definecolor{codegreen}{rgb}{0.25,0.49,0.48}
+\definecolor{codeorange}{rgb}{0.8,0.4,0.0}
+\definecolor{codeblue}{rgb}{0.13,0.29,0.53}
+\definecolor{backcolour}{rgb}{0.98,0.98,0.95}
+
+\lstdefinestyle{pythonstyle}{
+    language=Python,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{codeblue}\bfseries,
+    stringstyle=\color{codeorange},
+    commentstyle=\color{codegreen}\itshape,
+    backgroundcolor=\color{backcolour},
+    frame=single,
+    framerule=0.4pt,
+    rulecolor=\color{gray!50},
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4
+}
+
+\begin{document}  % 文档
+	
+\begin{abstract}
+\noindent Generative AI has arrived like a sudden ``autopilot upgrade'' for the economy: in some tasks it can cruise confidently, while in others a single error can trigger safety failures, resource waste, or IP disputes. Yet most workforce forecasts still treat jobs as monolithic titles, leaving post-secondary programs to redesign curriculum and enrollment without a task-level map of where humans must keep their hands on the wheel.
+
+\noindent We introduce \textbf{SPD-AutoDrive}, an interpretable, task-centric forecasting and education-policy design pipeline that turns Gen-AI disruption into a steerable system. The framework is unified by three linked metaphors that also define its computational structure. \textbf{(1) Social Autopilot:} each occupation is a vehicle traveling a route composed of tasks; task $i$ has importance weight $c_i$, and its human takeover share $w_i(t)$ (AI share $s_i(t)=1-w_i(t)$) evolves year by year---formalizing when humans ``take over'' versus when an AI autopilot is allowed to drive. \textbf{(2) Instrument Cluster:} to make the high-dimensional takeover map $\mathbf{W}(t)$ auditable, we compress it into a dashboard of Hands-on Ratio $H(t)$, Automation Pressure $P(t)$, Risk Exposure $R(t)$, Sustainability Exposure $\mathrm{EnvExp}(t)$, and Attribution Exposure $\mathrm{AttrExp}(t)$, plus a manual/co-pilot/autopilot task-mode split that specifies ``how to teach and test.'' \textbf{(3) Workscape Terrain:} we define a composite workscape potential $U_{\text{total}}(\mathbf{W},t)=U_{\text{eff}}+U_{\text{safe}}+U_{\text{inertia}}+U_{\text{env}}+U_{\text{attr}}$ and interpret it as terrain that the vehicle descends under inertia and noise---an efficiency valley pulls toward automation, a safety cliff/guardrail penalizes over-release, inertia mud slows abrupt shifts, a sustainability heat hill encodes compute/energy/water limits, and an attribution toll wall captures provenance and rights constraints.
+
+\noindent Operationally, we parse O*NET-style occupational profiles into weighted task sets and map each task to four interpretable drivers: time-varying AI capability $a_i(t)$, safety/quality risk $r_i$, sustainability exposure $E_i$, and attribution/IP exposure $A_i$. We simulate 2026--2036 futures for three representative careers---Software Developers, Electricians, and Graphic Designers---and couple internal task-structure change to an external labor-market layer to recommend whether associated programs should grow, hold, or shrink. Education becomes steering: we optimize a feasible 5-year (2026--2030) trajectory for five program levers (AI literacy, safety/verification training, reskilling infrastructure, attribution/provenance governance, and sustainability discipline) using PPO, and translate lever settings into auditable curriculum artifacts and governance rules (verification evidence packs, provenance sheets, and resource/iteration budgets).
+
+\noindent Results show divergent trajectories: electrician work remains predominantly hands-on and merits stable capacity, while software development and graphic design shift strongly into co-pilot/autopilot regimes, creating productivity-driven supply pressure and elevating provenance and resource governance needs---motivating targeted contraction alongside curricula centered on verification, traceable provenance, and resource-aware workflows.
+
+\begin{keywords}
+Gen-AI; occupational dynamics; curriculum policy; reinforcement learning; O*NET\textsuperscript{\cite{onet2025database}}
+\end{keywords}
+
+\vspace{0.4em}
+\noindent\textbf{GitHub:} \texttt{https://github.com/Jasper-Zhang-A/ICM2026}
+\end{abstract}
+
+
+\title{Hands on the Wheel: SPD-AutoDrive for Task-Level Gen-AI Forecasting}
+\maketitle % 生成sheet页
+\tableofcontents  % 生成目录表
+
+%%%%%%%%%%%%%%%%%% sheet页与目录页结束 %%%%%%%%%%%%%%%%%%
+\newpage  % 开始新的一页
+
+\section{Introduction}  % 一级标题
+\subsection{Problem Background}
+\hspace*{2em}
+Generative AI is rapidly reshaping how work is performed, but the direction and constraints vary significantly across occupations.\textsuperscript{\cite{eloundou2023gpts}}
+Post-secondary programs therefore face a coupled assignments: how to redesign training for AI-assisted workflows \emph{while} simultaneously adjusting enrollment amid uncertainties in labor market adjustments..\textsuperscript{\cite{wef2025futureofjobs}}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{background.png}
+    \caption{Lost in the Gen-AI Fog—learners across fields confront an uncertain future as AI reshapes the skills that matter.}
+    \label{fig:placeholder}
+\end{figure}
+% [中文注释：AI冲击就业→教育机构困境→不同职业差异大→缺乏指导→需要数据驱动框架]
+	
+\subsection{Restatement of the Problem}
+\hspace*{2em}
+Gen-AI is now  integrated into everyday workflows across writing, coding, and design.
+This prompt requires us to forecast \textit{task-level} evolution trends for three representative occupations, then translate those forecasts into program decisions on scale, curriculum, and governance under non-employability constraints such as safety, sustainability, and belonging.
+	
+Based on the prompt, we restate the problem as addressing \textbf{two overarching questions}, with the second question encompassing several practical sub-questions.
+
+\paragraph{Question 1: How will Gen-AI reshape the future of three representative professions?}
+We select three careers---one each from \textbf{STEM}, \textbf{skilled trades}, and \textbf{the arts}---to construct data-driven models predicting how their task structures evolve under Gen-AI. This entails:
+
+\begin{itemize}
+    \item construct a task-centric dataset for each career,covering tasks, work scenario, skills/abilities;
+    \item define drivers for capability, risk, sustainability, and attribution;
+    \item simulate a trajectory of human--AI allocation and summarize it with dashboard indicators.
+\end{itemize}
+\vspace{-0.5em}
+\paragraph{Question 2: Based on those modeled futures, how should three specific educational programs respond?}
+For each career, we select one corresponding program from university , trade apprenticeship and arts school and provide concrete recommendations supported by model outputs:
+\begin{itemize}
+	    \item \textbf{Program scale ---grow or shrink:} Should the program expand or contract (graduate more or fewer people) as the profession changes due to Gen-AI? If contraction is warranted, what adjacent programs or pathways can absorb displaced learners?
+	    \item \textbf{Curricular response to``how to Gen-AI'':} What Gen-AI-related competencies and governance components should each program teach --ranging from AI literacy and tool use to responsible practice---and how should these be balanced given costs such as safety risks, missing or incorrect attribution, and resource demands,such as energy and water usage. Our model outputs must be used to justify these design choices.
+	    \item \textbf{Success beyond employability:} If employability is not the only success criterion, what additional factors should be considered, and how would the model and recommendations change when these factors are incorporated?
+	    \item \textbf{Generalization:}To what extent can recommendations transcend the limitations of individual institutions or projects to achieve universality? And what conditions determine the legitimacy of such universality?
+\end{itemize}
+		
+\subsection{Our Work}
+\hspace*{2em}
+We contribute an end-to-end pipeline that connects occupational forecasting to program action:
+\begin{itemize}
+  \item \textbf{Task-centric data synthesis} from O*NET\textsuperscript{\cite{onet2025database}} (tasks, work context, abilities) and labor forecasts.
+  \item \textbf{SPD-AutoDrive dynamics} that simulate the takeover map $\mathbf W(t)$ and dashboard indicators under baseline or curriculum scenarios.
+  \item \textbf{Policy optimization} that learns a 5-year lever trajectory via PPO\textsuperscript{\cite{onet2025database}} around the current curriculum levers.
+  \item \textbf{Program outputs} including size decisions (\texttt{grow}/\texttt{hold}/\texttt{shrink}), curriculum modules, and auditable AI governance rules.
+\end{itemize}
+
+ Figure 2 contrasts our SPD-AutoDrive framework with the common practice, highlighting our key innovations that enable traceable and policy-actionable outputs.
+ 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{figures/1.png}
+    \caption{Common Practice vs Our SPD-AutoDrive Framework for labor market policy generation.}
+    \label{fig:placeholder}
+\end{figure}
+	
+	
+	
+\section{Assumptions and Justifications}
+
+% Assumption 1
+\noindent \textit{\textbf{Assumption 1:}} During the study period, the accuracy and completeness of public employment, labour market and programme data are sufficient to support cross-occupational comparisons.
+\begin{justification}
+	    % 这里的标签长短决定了上面 leftmargin 需要设多大
+	    \item\textbf{Justifications:} We rely on public, traceable sources and report results primarily as relative patterns; robustness checks ensure conclusions do not hinge on a small subset of uncertain records.
+\end{justification}
+\vspace{0.3em}
+% Assumption 2
+\noindent \textit{\textbf{Assumption 2:}} Each career can be described by a finite set of core tasks whose relative importance evolves gradually over the forecast horizon. 
+\begin{justification}
+	    \item\textbf{Justifications:} Gen-AI changes how tasks are performed more than job titles; a task view enables cross-domain comparison and supports gradual, interpretable evolution rather than abrupt relabeling.
+\end{justification}
+\vspace{0.3em}
+% Assumption 3
+\noindent \textit{\textbf{Assumption 3:}} The proliferation of Gen-AI is approaching saturation point, with education and labour markets adjusting with inertia, while sustainability and attribution risks constrain its adoption trajectory.
+\begin{justification}
+	    \item\textbf{Justifications:}Numerous constraints exist in the real world, such as verification issues, regulatory requirements, capability limitations, and non-employment restrictions. We tested alternative boundaries and weights in our sensitivity analysis to ensure their reasonableness.
+\end{justification}
+
+\section{Notation \& Glossary}
+\label{sec:notation}
+
+\subsection{Notations}
+Table~\ref{tab:notations} summarizes key notations. Symbol names are consistent with code variables for reproducibility.
+
+\begin{ThreePartTable}
+\begin{TableNotes}[flushleft]
+\footnotesize
+\item \textbf{Note.} We normalize heterogeneous task features into $[0,1]$ when applicable. Implementation details are deferred to Appendix.
+\end{TableNotes}
+
+\begin{longtable}{@{} >{\centering\arraybackslash}m{0.1\textwidth} >{\centering\arraybackslash}m{0.13\textwidth} >{\centering\arraybackslash}m{0.71\textwidth} @{}}
+\caption{Notation summary.}
+\label{tab:notations}\\
+
+\toprule
+\textbf{Symbol} & \textbf{Domain} & \textbf{Description} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Symbol} & \textbf{Domain} & \textbf{Description} \\
+\midrule
+\endhead
+
+\midrule
+\insertTableNotes
+\endfoot
+
+\bottomrule
+\endlastfoot
+
+% -------------------- Group 1 --------------------
+\rowcolor{grphead}\multicolumn{3}{@{}l}{\textit{Task / Time indices}}\\
+\rowcolor{gA} $i$ & $\{1,\dots,n\}$ & Task index.\\
+\rowcolor{gB} $t$ & $\{t_0,\dots,t_T\}$ & Discrete time index / calendar year in simulation.\\
+
+% -------------------- Group 2 --------------------
+\rowcolor{grphead}\multicolumn{3}{@{}l}{\textit{State variables}}\\
+\rowcolor{gB} $w_i(t)$, $\mathbf{W}(t)$&$(0,1)$\newline $(0,1)^n$ & Human takeover share for task $i$; takeover vector across all tasks.\\
+\rowcolor{gA} $c_i$ & $[0,1]$ & Task importance weight (used in aggregation).\\
+
+% -------------------- Group 3 --------------------
+\rowcolor{grphead}\multicolumn{3}{@{}l}{\textit{Task-level drivers}}\\
+\rowcolor{gB} $a_i(t)$, $r_i$ & $[0,1]$ & AI capability on task $i$ at time $t$; risk proxy.\\
+\rowcolor{gA} $E_i$, $A_i$ & $[0,1]$ & Sustainability exposure; attribution/IP exposure.\\
+
+% -------------------- Group 4 --------------------
+\rowcolor{grphead}\multicolumn{3}{@{}l}{\textit{Policy levers}}\\
+\rowcolor{gB} $\mathbf{u} = u_1,\dots,u_5$ & $[0,1]^5$ & AI literacy, safety training, reskilling, attribution governance, sustainability.\\
+
+% -------------------- Group 5 --------------------
+\rowcolor{grphead}\multicolumn{3}{@{}l}{\textit{Objective (Workscape Potential)}}\\
+\rowcolor{gA} $U_{\text{total}}$ & $\mathbb{R}$ & $U_{\text{eff}} + U_{\text{safe}} + U_{\text{inertia}} + U_{\text{env}} + U_{\text{attr}}$:
+
+efficiency, safety, inertia, sustainability, attribution.\\
+
+% -------------------- Group 6 --------------------
+\rowcolor{grphead}\multicolumn{3}{@{}l}{\textit{Aggregated metrics}}\\
+\rowcolor{gB} $H$, $P$, $R$ & $[0,1]$ & Hands-on ratio; automation pressure; risk exposure. See Eqs.~\eqref{eq:H}--\eqref{eq:R}.\\
+\rowcolor{gA} EnvExp, AttrExp & $[0,1]$ & Sustainability exposure; attribution exposure. See Eqs.~\eqref{eq:Env}--\eqref{eq:Attr}.\\
+
+\end{longtable}
+\end{ThreePartTable}
+\vspace{-2em}
+\begin{align}
+H(t) &= \sum_i c_i\, w_i(t), \label{eq:H}\\[2pt]
+P(t) &= \sum_i c_i\, a_i(t)\bigl(1-w_i(t)\bigr), \label{eq:P}\\[2pt]
+R(t) &= \sum_i c_i\, r_i\bigl(1-a_i(t)\bigr)\bigl(1-w_i(t)\bigr), \label{eq:R}\\[6pt]
+\mathrm{EnvExp}(t) &= \sum_i c_i\, E_i \bigl(1-w_i(t)\bigr), \label{eq:Env}\\[2pt]
+\mathrm{AttrExp}(t) &= \sum_i c_i\, A_i \bigl(1-w_i(t)\bigr). \label{eq:Attr}
+\end{align}
+\vspace{-2em}
+\subsection{Glossary}
+\begin{itemize}
+  \item \textbf{SPD-AutoDrive:} Socio-physical dynamics model of human--AI task allocation.
+  \item \textbf{Scenario / levers $\mathbf u$:} A lever profile (baseline, curriculum, optimized) that modulates capabilities and constraints.
+\end{itemize}
+%================================================
+
+
+
+
+
+
+%================================================
+
+
+\section{Data Synthesis}
+\vspace{0.3em}
+\subsection{Data Sources}
+\hspace{2em}
+We construct the task-centric knowledge base from two primary sources, as summarized in Table~\ref{tab:sources}.
+% Table 2: Data Sources
+\begin{table}[htbp]
+\centering
+\caption{Data Sources}
+\label{tab:sources}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{>{\centering\arraybackslash}p{3cm} >{\centering\arraybackslash}p{4.5cm} >{\centering\arraybackslash}p{5.5cm}}
+\toprule
+\textbf{Source} & \textbf{Content} & \textbf{Key Variables} \\
+\midrule
+O*NET 29.0\textsuperscript{\cite{onet2025database}}    & Occupational profiles & Tasks, Work Context, Abilities \\[3pt]
+BLS OOH 2024\textsuperscript{\cite{bls2024projections}} & Labor projections     & Employment, Growth, Openings \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Each O*NET\textsuperscript{\cite{onet2025database}} profile is parsed into sub-tables grouped by the \texttt{source\_table} field: \textit{tasks} (with Importance scores), \textit{work\_context} (5-point response distributions), \textit{abilities}, and \textit{skills}. This structure enables decomposing each career into weighted task collections for downstream modeling.
+
+%--------------------------------------------------
+\subsection{Feature Engineering}
+\hspace{2em}
+We transform task descriptions into a six-dimensional feature vector $\mathbf{f}_i \in [0,1]^6$ through a hybrid extraction pipeline;specific details are provided in Table~\ref{tab:features}.
+\subsubsection*{Feature Dimensions}
+
+% Table 3: Six-Dimensional Task Feature Space
+\begin{table}[htbp]
+\centering
+\caption{Six-Dimensional Task Feature Space}
+\label{tab:features}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{>{\centering\arraybackslash}p{3.5cm} >{\centering\arraybackslash}p{9cm}}
+\toprule
+\textbf{Dimension} & \textbf{Representative Keywords} \\
+\midrule
+Physical   & install, repair, handle, operate, equipment \\[2pt]
+Digital    & code, software, database, algorithm, system \\[2pt]
+Creative   & design, create, artistic, visual, innovate \\[2pt]
+Social     & communicate, collaborate, negotiate, present \\[2pt]
+Analytical & analyze, calculate, evaluate, optimize \\[2pt]
+Hazard     & safety, hazardous, protective, compliance \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection*{Hybrid Extraction}
+\hspace{2em}
+We combine two complementary methods to balance interpretability and robustness:
+
+\begin{enumerate}
+    \item \textbf{Keyword Scoring}: Match curated keyword sets against normalized task text.
+    \begin{equation}
+    s_{\text{kw}}^d = \frac{\displaystyle\sum_{k \in \mathcal{K}_d} w_k \cdot \mathbf{1}[\text{match}(k,\, \text{task})]}{\displaystyle\sum_{k \in \mathcal{K}_d} w_k}
+    \end{equation}
+    
+    \item \textbf{TF-IDF Similarity}: Compute cosine similarity between task vector and dimension anchor.
+    \begin{equation}
+    s_{\text{tf}}^d = \cos\bigl(\,\text{tfidf}(\text{task}),\; \text{tfidf}(\text{anchor}_d)\,\bigr)
+    \end{equation}
+\end{enumerate}
+
+The final feature value uses probabilistic combination:
+\begin{equation}
+f^d = 1 - (1 - s_{\text{kw}}^d)(1 - s_{\text{tf}}^d)
+\end{equation}
+
+%--------------------------------------------------
+\subsection{Data Preprocessing}
+\hspace{2em}\textbf{Weight Normalization:}
+Task importance weights are normalized to sum to unity:
+\begin{equation}
+c_i = \frac{\text{Importance}_i}{\sum_j \text{Importance}_j}
+\end{equation}
+\hspace{2em}\textbf{Quality Control:}
+For missing importance ,we employ imputation based on category-wise means; whereas for outliers exceeding $2\sigma$, we apply Wilson's correction. In this process, we calculated a match rate of 0.87 between keywords and TF-IDF feature extraction.
+
+The extracted features $\mathbf{f}_i$ and weights $c_i$ serve as inputs to the driver construction in Section~\ref{sec:drivers}.
+
+\section{Systematic Career Selection (Entropy-TOPSIS)}
+\label{sec:career_selection}
+
+To ensure representative and auditable comparisons, we select one career from each category (STEM, Trade, Arts) using a two-stage screening framework.
+
+\textbf{Stage 1: Data-availability pre-screen.} From an SOC\textsuperscript{\cite{bls2018soc}}-based candidate list (10 per category), we retain occupations with at least 7/8 required signals covering BLS\textsuperscript{\cite{bls2024oews}} (employment, wages, projections), O*NET \textsuperscript{\cite{onet2025database}}(tasks, skills, knowledge), and AI-exposure measures\textsuperscript{\cite{frey2017automation,eloundou2023gpts}}. This threshold ensures feasibility of downstream modeling while maintaining a sufficient candidate pool.
+
+\textbf{Stage 2: Entropy-TOPSIS ranking and Robustness validation.} Among qualified candidates, we evaluate representativeness using four indicators: \textit{Employment Scale} (total employment)\textsuperscript{\cite{bls2024oews}}, \textit{Category Share} (percentage of category employment), \textit{Related Occupations} (O*NET linkages)\textsuperscript{\cite{onet2025database}}, and \textit{Public Recognition} (Google Trends\textsuperscript{\cite{googletrends2026}} search interest). To avoid subjective weighting, we apply the Entropy Weight Method\textsuperscript{\cite{shannon1948mathematical}}:
+\begin{equation}
+p_{ij} = \frac{x'_{ij}}{\sum_{i=1}^{n} x'_{ij}}, \quad E_j = -\frac{1}{\ln n}\sum_{i=1}^{n} p_{ij}\ln p_{ij}, \quad w_j = \frac{1-E_j}{\sum_{k=1}^{m}(1-E_k)}
+\label{eq:entropy}
+\end{equation}
+where lower entropy $E_j$ implies stronger discrimination and weights satisfy $\sum_j w_j = 1$. The resulting weights are shown in Figure~\ref{fig:stage2} (left). We then rank candidates via TOPSIS\textsuperscript{\cite{hwang1981topsis}}, computing relative closeness $C_i = D_i^-/(D_i^+ + D_i^-)$ where $D_i^{\pm}$ measure distances to ideal/anti-ideal solutions. Figure~\ref{fig:stage2} (right) presents the final ranking across all qualified candidates. Robustness is validated by $\pm 20\%$ weight perturbation (100 trials); all selections remain 100\% stable.
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.44\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/Stage2_EntropyWeights.png}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.56\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/Stage2_TOPSIS_Ranking.png}
+\end{minipage}
+\caption{Entropy weights (left) and TOPSIS ranking (right).}
+\label{fig:stage2}
+\end{figure}
+
+\textbf{Final selection.} After gathering all relevant data, we selected "the most authoritative representatives". The corresponding results are presented in the table below~\ref{tab:selection}. Consequently, software developers (STEM field), electricians (technical trades), and graphic designers (artistic field) have been chosen as the careers for this paper.
+
+\begin{table}[H]
+\centering
+\caption{Final Career Selection Results}
+\label{tab:selection}
+\begin{tabular}{llcccc}
+\hline
+\textbf{Category} & \textbf{Career} & \textbf{TOPSIS} & \textbf{Emp.(K)} & \textbf{Cat. Share} & \textbf{Stability} \\
+\hline
+STEM & Software Developers & 0.955 & 1,795 & 18.2\% & 100\% \\
+Trade & Electricians & 0.870 & 739 & 12.4\% & 100\% \\
+Arts & Graphic Designers & 1.000 & 247 & 9.8\% & 100\% \\
+\hline
+\end{tabular}
+\end{table}
+
+%================================================
+\section{Career Forecasting and Selection}
+\label{sec:career_forecasting}
+
+\subsection{Model Development}
+\paragraph{From a sociological process to a quantifiable model (the ``social autopilot'' view).}
+\vspace{-0.5em}
+Career trend forecasting is essentially an adaptive process of a social system. To turn this sociological process into a quantifiable model, we introduce a simple yet defensible idealization: under a fixed workload and institutional constraints, a career's task allocation is continuously pressured to move toward higher efficiency and lower total cost.Building upon this premise, we propose a novel metaphor concept—\textbf{“social autonomy”}—to accommodate this scenario: careers serve as vehicles, tasks as road segments, while Gen-AI  provides autonomous driving capabilities. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{task1.png}
+    \caption{Task mode evolution (curriculum scenario).}
+    \label{fig:task-mode}
+\end{figure}
+\label{subsec:model_development}
+The superiority of this framework lies in the operational mode of the vehicle—not assumed to instantly reach a perfect endpoint, but rather to evolve incrementally, settling into stability—achieving an efficient and viable dynamic equilibrium within constraints of safety, resources, and accountability.
+
+Let
+\begin{equation}
+w_i(t)\in(0,1)
+\end{equation}
+denote the human takeover share of task $i$ in year $t$ (so $1-w_i(t)$ is the Gen-AI participation share). We collect all tasks into a takeover map,
+\begin{equation}
+\mathbf W(t)=[w_1(t),\dots,w_n(t)].
+\end{equation}
+Under this metaphor, the career does not ``solve'' an optimal coordination state in one step. Instead, it updates its driving strategy year by year based on feedback from changing road conditions.
+
+We represent the total ``driving cost'' of operating the occupation under a given takeover map $\mathbf W(t)$ as a composite objective:
+\begin{equation}
+U_{\text{total}}(\mathbf W,t)=U_{\text{eff}}+U_{\text{safe}}+U_{\text{inertia}}+U_{\text{env}}+U_{\text{attr}}.
+\end{equation}
+Each term corresponds to a real pressure the system must pay for: \emph{efficiency mismatch} (wasting human effort on tasks where AI could reliably help), \emph{safety/quality mismatch} (releasing control on tasks where failure consequences are high), \emph{transition inertia} (institutions and organizations cannot shift task structures overnight), and the explicitly required non-employability costs---\emph{energy/water burden} and \emph{attribution/IP responsibility}. The latter are implemented as soft-threshold ``walls'' to reflect sharply rising marginal costs when AI usage scales beyond practical limits. This objective often has a complex, multi-valley structure, so we do not treat it as a simple problem with an instantly attainable global optimum; rather, we use it as an intuitive scalar that summarizes the pressures shaping occupational evolution.
+
+\paragraph{Metaphor dictionary (explicit correspondence).}
+\begin{itemize}
+  \item \textbf{Vehicle:} career, its takeover is $w_i(t)$;\,\,\textbf{Road:} autopilot,its share is $s_i(t)=1-w_i(t)$.
+  \item \textbf{Road conditions:} capability $a_i(t)$ and constraints $(r_i,E_i,A_i)$.
+  \item \textbf{Workscape terrain:} $U_{\text{eff}}$ (``efficiency valley'' pull), $U_{\text{safe}}$ (``safety cliff/guardrail''), $U_{\text{inertia}}$ (``inertia mud/damping''), $U_{\text{env}}$ (``sustainability heat hill''), $U_{\text{attr}}$ (``attribution toll wall'').
+\end{itemize}
+
+To make the ``pressure toward lower total cost'' assumption both computable and intuitive, we interpret $\mathbf W(t)$ as the occupation's \emph{state}, and $U_{\text{total}}(\mathbf W,t)$ as a \emph{scalar total cost} of completing the same workload under that state. Since $\mathbf W$ is high-dimensional and $U_{\text{total}}$ maps the state space into the real line---formally $U_{\text{total}}:[0,1]^n\to\mathbb R$---it naturally defines a \emph{cost landscape}: each state $\mathbf W$ corresponds to a point on the landscape, and its height is the composite cost. In this view, a ``better'' task allocation is not chosen by narrative preference; it corresponds to low valleys of the landscape---states that are cheaper, more sustainable, and more accountable.
+
+This is more than a metaphor. If the system is pressured to reduce total cost over time, then its change direction should align with descending the landscape (i.e., moving roughly along $-\nabla_{\mathbf W}U_{\text{total}}$). At the same time, institutional inertia acts like damping (the system cannot jump instantly to a valley), while market and social uncertainty act like random perturbations, allowing limited exploration among multiple local valleys.
+
+In reality, the world is not an ideal optimizer: incomplete information, policy delays, and uncertainty mean that occupational structure evolves like a vehicle moving slowly downhill on a rugged terrain with damping and noise, rather than snapping to the global minimum. Therefore, we generate the trajectory of $\mathbf W(t)$ through a dynamic update process: efficiency pressure pulls toward automation, safety and responsibility act as guardrails against over-release, environmental and attribution costs form soft boundaries, and inertia limits the speed of structural change. This produces readable dashboard outputs---such as $H(t)$, $P(t)$, and $R(t)$, together with the distribution of manual/co-pilot/autopilot task modes. Finally, we combine these internal-structure trajectories with an external demand baseline (BLS-style forecast) to support program-level recommendations on scaling (expansion vs.\ contraction) and curriculum adjustments.
+%================================================
+
+\subsection{Driver Mechanism Design 
+---Operationalizing Gen-AI Impact into quantifiable Variables}
+\label{sec:drivers}
+\hspace{2em}
+Here we further introduce the concept---drivers, which represent the ‘road conditions’ within the model. We define four task-level drivers $\bigl(a_i(t), r_i, E_i, A_i\bigr)$ and an intervention input $\mathbf u$ as quantifiable variables, thereby translating the abstract "capability enhancement and constraint boundaries" into concrete data for processing.
+\subsubsection*{Task-level AI Capability Growth: $a_i(t)$}
+\hspace{2em}We model capability coverage as a monotone base+growth process mapped from task text/features:
+\[
+a_i(t)=\mathrm{clip}\!\left(\text{base}_i+\text{growth}_i\cdot g(t)\right),
+\]
+where $g(t)$ is a time-growth envelope and $\mathrm{clip}(\cdot)$ truncates into $[0,1]$.
+In implementation, \texttt{build\_tasks()} extracts task features from O*NET\textsuperscript{\cite{onet2025database}} and \texttt{ai\_capability()} performs the mapping.
+
+\subsubsection*{Safety/Quality Risk: $r_i$}
+\hspace{2em}We construct a risk proxy from work-context signals and physical/hazard task features. Higher $r_i$ implies stricter human-in-the-loop constraints when $a_i(t)$ is low, implemented via \texttt{occupation\_context\_index()} and \texttt{build\_tasks()}.
+
+\subsubsection*{Sustainability Exposure: $E_i$}
+\hspace{2em}We use $E_i$ as a proxy for resource exposure (energy/water/compute governance) induced by scaling AI usage. It is derived from task-type composition: more ``AI-usage-like'' digital/analytical/creative mixes yield higher $E_i$.
+
+\subsubsection*{Attribution/IP Risk: $A_i$}
+We use $A_i$ as a proxy for attribution/IP exposure, driven by task creativity and amplified by occupation-level creative intensity \texttt{creativity\_occ}:
+\[
+A_i \propto \text{creative}_i\cdot\bigl(0.5+\texttt{creativity\_occ}\bigr)+\text{digital}_i+\text{analytical}_i.
+\]
+
+\subsubsection*{Education/Institutional Intervention Input: $\mathbf{u}$}
+\hspace{2em}The four state drivers describe the occupation’s capability frontier and constraint boundaries; the intervention input $\mathbf{u}$ represents education/institution decisions that modulate effective parameters and switching frictions. In Task~1, $\mathbf u$ is used as an exogenous scenario setting; in Task~2, it becomes five program control levers evaluated by \texttt{scenario\_adjust()} and \texttt{evaluate\_year()}.
+
+\paragraph{Summary: From Drivers to Dynamics.}
+In this section ,we converts task data into a small set of drivers and levers, providing the input interface for the dynamics in Section~6.3.
+
+\subsection{Progressive Derivation of the Mathematical Model}
+\label{sec:dynamics}
+
+Building on the drivers in Section~\ref{sec:drivers}, we treat the task-level \emph{human share} $w_i\in(0,1)$ as the core state variable , while AI share is $s_i=1-w_i$:
+
+We then add interpretable cost terms (efficiency, safety, inertia, and two soft-threshold walls) to obtain a simulatable evolution dynamics.
+
+\paragraph{Step 1: Minimal ``Task Takeover'' Structure---Only Capability \& Efficiency ; \emph{Efficiency Valley}).}
+When Gen-AI possesses sufficient capability, the decision to manually retain tasks will result in efficiency troughs. Such mismatches in efficiency will be penalised:
+\[
+U_{\text{eff}}=\sum_i c_i\,\alpha\,a_i(t)\,w_i,
+\]
+
+\paragraph{Step 2: Adding Safety/Quality Mismatch (High-Consequence Risk; \emph{Safety Cliff/Guardrail}).}
+Safety/quality mismatch penalizes releasing control when AI is not reliable on high-risk tasks:
+\[
+U_{\text{safe}}=\sum_i c_i\,\beta\,r_i\bigl(1-a_i(t)\bigr)\bigl(1-w_i\bigr),
+\]
+
+\paragraph{Step 3: Adding Policy Lag and Organizational Inertia (Dynamic Rather Than Static; \emph{Inertia Mud/Damping}).}
+Inertia penalizes rapid year-to-year shifts in allocation:
+\[
+U_{\text{inertia}}=\lambda_{\text{eff}}\sum_i\bigl(w_i-w_i^{\text{prev}}\bigr)^2,
+\]
+with reskilling reducing switching cost via
+\[
+\lambda_{\text{eff}}=\lambda\exp\!\bigl(-\omega\,u_{\text{reskilling}}\bigr).
+\]
+
+\paragraph{Step 4: Adding Beyond-Employability Constraints (Sustainability and Attribution/IP; \emph{Heat Hill} \& \emph{Toll Wall}).}
+We add sustainability and attribution/IP soft-threshold ``walls'' (softplus) that activate when AI share exceeds a tolerable threshold:
+\[
+U_{\text{env}}=\kappa\sum_i c_i\,E_i\cdot \mathrm{softplus}\!\Bigl(\eta_{\text{env}}\bigl(s_i-\tau_{\text{env}}\bigr)\Bigr),
+\]
+\[
+U_{\text{attr}}=\delta\sum_i c_i\,A_i\cdot \mathrm{softplus}\!\Bigl(\eta_{\text{attr}}\bigl(s_i-\tau_{\text{attr}}\bigr)\Bigr).
+\]
+
+\paragraph{Step 5: From Static Optimization to ``Occupational Evolution Dynamics'' (\emph{Downhill + Noise}).}
+Combining all components yields the total potential:
+\[
+U_{\text{total}} = U_{\text{eff}} + U_{\text{safe}} + U_{\text{inertia}} + U_{\text{env}} + U_{\text{attr}}.
+\]
+To guarantee $w_i\in(0,1)$, we parameterize $w_i$ in logit space:
+\[
+w_i=\sigma(\theta_i),
+\]
+and evolve $\boldsymbol{\theta}$ by a stochastic, preconditioned gradient dynamics (a stable ``downhill + noise'' update).
+\begin{equation}
+\theta_i \leftarrow \theta_i - \mathrm{lr}\,\hat m_i\,q_i + \sqrt{2T\,\mathrm{lr}}\,\sqrt{q_i}\,\varepsilon_i,
+\qquad
+q_i=\frac{1}{\sqrt{\hat v_i}+\epsilon},\quad \varepsilon_i\sim\mathcal N(0,1),
+\end{equation}
+where $(\hat m_i,\hat v_i)$ are Adam\textsuperscript{\cite{kingma2015adam}}  bias-corrected moments of the gradient $\partial U_{\text{total}}/\partial \theta_i$.
+
+\paragraph{Takeaway.}
+The resulting $U_{\text{total}}$ defines a simulatable occupational evolution dynamics that drives Task~1 forecasts and supports Task~2 program decisions.
+
+
+
+
+
+% =========================
+% Section 6. Parameter Estimation and Training (Concise)
+% =========================
+\section{Parameter Estimation and Training (Concise)}
+\label{sec:param_training}
+
+This section makes the framework operational by (i) constructing task-level drivers $(a_i(t),r_i,E_i,A_i)$ from O*NET\textsuperscript{\cite{onet2025database}} task text/context and (ii) defining program actions $\mathbf u\in[0,1]^5$ that adjust effective parameters. Dynamics come from the inertia term and year-to-year update in Section~\ref{sec:dynamics}.
+
+\subsection{Driver Construction}
+\label{subsec:interpretable_mapping}
+
+\subsubsection*{Motivation}
+O*NET\textsuperscript{\cite{onet2025database}} provides task descriptions and structured context (but not direct labels for AI shares), so we use transparent, consistent mappings:
+\[
+\text{task text / structured fields}
+\ \rightarrow\
+\text{interpretable features}
+\ \rightarrow\
+\bigl(a_i(t), r_i, E_i, A_i\bigr),
+\]
+Coefficients are centralized and perturbed in sensitivity analysis (Section~\ref{sec:validation}).
+
+\subsubsection*{Text-to-Feature}
+We use a keyword/TF--IDF hybrid (Table~\ref{tab:features}) to extract six normalized task features.
+
+\subsubsection*{Feature-to-Driver: Unified Explicit Mappings (with Time and Nonnegativity Constraints)}
+Let $\boldsymbol{\phi}_i$ denote the feature vector of task $i$. We map it to bounded drivers via simple transforms (squashing + clipping) with centralized coefficients (Section~\ref{sec:validation}).
+
+\paragraph{(1) AI capability coverage $a_i(t)$: base + growth over time.}
+We decompose task-level AI coverage into a baseline suitability and a growth intensity:
+\begin{equation}
+\text{base}_i=\sigma(\mathbf{b}^\top \boldsymbol{\phi}_i),\qquad
+\text{growth}_i=\sigma(\mathbf{g}^\top \boldsymbol{\phi}_i),
+\label{eq:base_growth}
+\end{equation}
+and define
+\begin{equation}
+a_i(t)=\mathrm{clip}_{[0,1]}\!\Bigl(\text{base}_i+\text{growth}_i\cdot G(t)\Bigr),
+\label{eq:ai_coverage}
+\end{equation}
+where $G(t)$ is a monotone increasing time-growth envelope.
+
+\paragraph{(2) Safety/quality risk weight $r_i$: high-consequence penalty from context.}
+Let $\boldsymbol{\psi}_i$ summarize work-context attributes (e.g., hazard/physical interaction,
+high-responsibility settings). We define the nonnegative risk index
+\begin{equation}
+r_i=\mathrm{ReLU}(\mathbf{r}^\top \boldsymbol{\psi}_i).
+\label{eq:risk_index}
+\end{equation}
+
+\paragraph{(3) Sustainability exposure $E_i$: resource-pressure weight from task composition.}
+Let $\mathbf{t}_i=(t_i^{\text{dig}},t_i^{\text{ana}},t_i^{\text{cre}})$ denote the task-type composition
+(digital/analytical/creative). We define
+\begin{equation}
+E_i=\mathrm{ReLU}(\mathbf{e}^\top \mathbf{t}_i),
+\label{eq:sustainability_exposure}
+\end{equation}
+
+\paragraph{(4) Attribution/IP risk $A_i$: creative intensity with occupation-level amplification.}
+Let $c_{\text{occ}}$ denote the occupation-level creative intensity (e.g., aggregated from task composition).
+We model attribution/IP risk as
+\begin{equation}
+A_i=\mathrm{ReLU}\!\Bigl(\gamma\, t_i^{\text{cre}}(0.5+c_{\text{occ}})
++\eta_1 t_i^{\text{dig}}+\eta_2 t_i^{\text{ana}}\Bigr).
+\label{eq:attr_ip_risk}
+\end{equation}
+
+\paragraph{Unified scale and comparability.}
+Drivers are normalized/bounded to support cross-career comparison and systematic sensitivity tests.
+
+\subsection{Scenario Input $\mathbf{u}$ (Program Control Levers)}
+\label{subsec:scenario_u}
+
+We represent education/program actions as $\mathbf u\in[0,1]^5$ and evaluate them by converting $\mathbf u$ into effective parameters:
+\begin{align*}
+a_{\text{eff}}&=\mathrm{clip}_{[0,1]}(a+\rho u_1),\quad
+r_{\text{eff}}=\mathrm{clip}_{[0,1]}(r e^{-\psi u_2}),\quad
+\lambda_{\text{eff}}=\lambda e^{-\omega u_3},\\
+A_{\text{eff}}&=\mathrm{clip}_{[0,1]}(A e^{-\chi u_4}),\quad
+E_{\text{eff}}=\mathrm{clip}_{[0,1]}(E e^{-\zeta u_5}).
+\end{align*}
+In Task~1, $\mathbf u$ defines exogenous scenarios; in Task~2, it is optimized year-by-year as a lever policy.
+
+
+
+
+\subsection{Validation and Robustness}
+\label{sec:validation}
+
+We report conclusions only when stable across scenarios (baseline/curriculum/optimized), random seeds, and $\pm 20\%$ coefficient/threshold perturbations.
+
+\section{Task 1 — Results and Forecasting}
+\label{sec:task1-results}
+
+We present SPD-AutoDrive results for Electricians, Graphic Designers, and Software Developers. We report both a 5-year window (2026--2030) where PPO\textsuperscript{\cite{onet2025database}} optimizes program levers and a 10-year window (2026--2036) that reveals long-run structural trends.
+
+\subsection{Structural Indicators and Key Findings}
+
+Table~\ref{tab:results} summarizes end-of-horizon indicators: Human Takeover $H_{end}$, Automation Pressure $P_{end}$, Risk Exposure $R_{end}$, and two non-employability exposures (EnvExp and AttrExp).
+
+% ============ TABLE 5 ============
+\definecolor{lightyellow}{RGB}{255,253,237}
+\definecolor{lightgreen}{RGB}{236,247,230}
+\definecolor{lightblue}{RGB}{234,244,253}
+\definecolor{headeryellow}{RGB}{255,242,204}
+\definecolor{headergreen}{RGB}{198,224,180}
+\definecolor{headerblue}{RGB}{189,215,238}
+\definecolor{lightgray}{RGB}{255,255,255}
+
+\newcolumntype{L}{>{\centering\arraybackslash}p{4.4cm}}
+\newcolumntype{M}{>{\centering\arraybackslash}p{2.2cm}}
+\newcolumntype{S}{>{\centering\arraybackslash}p{1.6cm}}
+
+\begin{table}[H]
+\centering
+\caption{End-of-horizon structural indicators.}
+\label{tab:results}
+\renewcommand{\arraystretch}{1.1}
+\footnotesize
+\begin{tabular}{L M S S S S S}
+\toprule
+\cellcolor{headeryellow}\textbf{Career} & \cellcolor{headeryellow}\textbf{Scenario} & \cellcolor{headergreen}$\boldsymbol{H_{end}}$ & \cellcolor{headergreen}$\boldsymbol{P_{end}}$ & \cellcolor{headergreen}$\boldsymbol{R_{end}}$ & \cellcolor{headerblue}\textbf{EnvExp} & \cellcolor{headerblue}\textbf{AttrExp} \\
+\midrule
+\multicolumn{7}{l}{\textbf{(a) 5-Year Horizon (2026$\to$2030)}} \\
+\cellcolor{lightyellow}Electricians & \cellcolor{lightyellow}baseline & \cellcolor{lightgreen}0.737 & \cellcolor{lightgreen}0.121 & \cellcolor{lightgreen}0.101 & \cellcolor{lightblue}0.035 & \cellcolor{lightblue}0.021 \\
+\cellcolor{lightgray}Electricians & \cellcolor{lightgray}curriculum & \cellcolor{lightgray}0.653 & \cellcolor{lightgray}0.166 & \cellcolor{lightgray}0.063 & \cellcolor{lightgray}0.032 & \cellcolor{lightgray}0.026 \\
+\cellcolor{lightyellow}Electricians & \cellcolor{lightyellow}optimized & \cellcolor{lightgreen}0.654 & \cellcolor{lightgreen}0.137 & \cellcolor{lightgreen}0.070 & \cellcolor{lightblue}0.017 & \cellcolor{lightblue}0.020 \\
+\cellcolor{lightgray}Graphic Designers & \cellcolor{lightgray}baseline & \cellcolor{lightgray}0.640 & \cellcolor{lightgray}0.205 & \cellcolor{lightgray}0.045 & \cellcolor{lightgray}0.060 & \cellcolor{lightgray}0.100 \\
+\cellcolor{lightyellow}Graphic Designers & \cellcolor{lightyellow}curriculum & \cellcolor{lightgreen}0.561 & \cellcolor{lightgreen}0.300 & \cellcolor{lightgreen}0.035 & \cellcolor{lightblue}0.062 & \cellcolor{lightblue}0.073 \\
+\cellcolor{lightgray}Graphic Designers & \cellcolor{lightgray}optimized & \cellcolor{lightgray}0.523 & \cellcolor{lightgray}0.311 & \cellcolor{lightgray}0.044 & \cellcolor{lightgray}0.067 & \cellcolor{lightgray}0.069 \\
+\cellcolor{lightyellow}Software Developers & \cellcolor{lightyellow}baseline & \cellcolor{lightgreen}0.664 & \cellcolor{lightgreen}0.203 & \cellcolor{lightgreen}0.026 & \cellcolor{lightblue}0.077 & \cellcolor{lightblue}0.067 \\
+\cellcolor{lightgray}Software Developers & \cellcolor{lightgray}curriculum & \cellcolor{lightgray}0.647 & \cellcolor{lightgray}0.261 & \cellcolor{lightgray}0.015 & \cellcolor{lightgray}0.071 & \cellcolor{lightgray}0.054 \\
+\cellcolor{lightyellow}Software Developers & \cellcolor{lightyellow}optimized & \cellcolor{lightgreen}0.594 & \cellcolor{lightgreen}0.292 & \cellcolor{lightgreen}0.017 & \cellcolor{lightblue}0.071 & \cellcolor{lightblue}0.057 \\
+\midrule
+\multicolumn{7}{l}{\textbf{(b) 10-Year Horizon (2026$\to$2036)}} \\
+\cellcolor{lightyellow}Electricians & \cellcolor{lightyellow}baseline & \cellcolor{lightgreen}0.770 & \cellcolor{lightgreen}0.159 & \cellcolor{lightgreen}0.052 & \cellcolor{lightblue}0.034 & \cellcolor{lightblue}0.023 \\
+\cellcolor{lightgray}Electricians & \cellcolor{lightgray}curriculum & \cellcolor{lightgray}0.682 & \cellcolor{lightgray}0.222 & \cellcolor{lightgray}0.035 & \cellcolor{lightgray}0.030 & \cellcolor{lightgray}0.028 \\
+\cellcolor{lightyellow}Graphic Designers & \cellcolor{lightyellow}baseline & \cellcolor{lightgreen}0.680 & \cellcolor{lightgreen}0.251 & \cellcolor{lightgreen}0.021 & \cellcolor{lightblue}0.053 & \cellcolor{lightblue}0.093 \\
+\cellcolor{lightgray}Graphic Designers & \cellcolor{lightgray}curriculum & \cellcolor{lightgray}0.627 & \cellcolor{lightgray}0.331 & \cellcolor{lightgray}0.011 & \cellcolor{lightgray}0.054 & \cellcolor{lightgray}0.067 \\
+\cellcolor{lightyellow}Software Developers & \cellcolor{lightyellow}baseline & \cellcolor{lightgreen}0.671 & \cellcolor{lightgreen}0.275 & \cellcolor{lightgreen}0.011 & \cellcolor{lightblue}0.078 & \cellcolor{lightblue}0.067 \\
+\cellcolor{lightgray}Software Developers & \cellcolor{lightgray}curriculum & \cellcolor{lightgray}0.677 & \cellcolor{lightgray}0.313 & \cellcolor{lightgray}0.002 & \cellcolor{lightgray}0.070 & \cellcolor{lightgray}0.052 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+As shown in Table~\ref{tab:results}, curriculum levers reduce $R_{end}$ across all three careers, validating safety/verification-focused training. Lower $H$ (more AI reliance) generally raises $P$ and must be balanced with sustainability and attribution constraints. PPO\textsuperscript{\cite{onet2025database}}-learned lever paths outperform static curriculum in the 5-year window, indicating value in adaptive policies.
+
+\subsection{Visual Analysis}
+
+To compare careers across multiple dimensions, we use a dashboard view (Figure~\ref{fig:dashboard}). The center reports Human Takeover $H$, and the surrounding gauges summarize efficiency, safety, inertia, sustainability, and attribution pressures on a common $[0,1]$ scale. These five gauges correspond one-to-one with $(U_{\text{eff}},U_{\text{safe}},U_{\text{inertia}},U_{\text{env}},U_{\text{attr}})$, and can be read as terrain forces (valley / cliff / mud / heat / toll) in the workscape metaphor.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/dashboard_combined.png}
+    \caption{Career dashboards: 5-year (left) vs. 10-year (right).}
+    \label{fig:dashboard}
+\end{figure}
+\vspace{-1em}
+
+Figure~\ref{fig:trajectory} traces year-by-year indicators under the curriculum scenario. Electricians remain the most hands-on, consistent with safety-critical physical work. Graphic Designers show the fastest decline in $H$ and the highest attribution exposure, highlighting the centrality of provenance and rights. Software Developers show moderate $H$ erosion with low risk exposure but relatively high environmental exposure, motivating verification and resource-aware workflows.
+\vspace{-0.5em}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{figures/career_trajectory.png}
+    \caption{10-year indicator trajectories (curriculum scenario).}
+    \label{fig:trajectory}
+\end{figure}
+\vspace{-0.5em}
+Figure~\ref{fig:task-mode} breaks tasks into modes that directly inform curriculum design. Graphic Designers and Software Developers shift most strongly into co-pilot/autopilot regimes, motivating training in supervision and verification; Electricians remain predominantly manual, reinforcing hands-on safety competence even as diagnostic tools improve.
+\vspace{-0.5em}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{figures/task_mode_evolution.png}
+    \caption{Task mode evolution (curriculum scenario).}
+    \label{fig:task-mode}
+\end{figure}
+In summary, the three careers exhibit distinct automation trajectories: Electricians maintain high human takeover with low non-employability exposure; Graphic Designers face rapid $H$ decline coupled with significant attribution pressure; Software Developers occupy a middle ground with moderate automation pressure but elevated environmental concerns. These differentiated patterns motivate the career-specific policy recommendations developed in Task~2.
+
+
+
+\section{Task 2 --- Education Policy as Steering on the Workscape}
+\label{sec:task2}
+
+\noindent Task~1 does not only describe trends: it outputs a compact, auditable set of \emph{decision signals} that Task~2 must reference.
+These signals include (i) the takeover map $\mathbf W(t)$ and end-horizon task modes (manual / co-pilot / autopilot; Figure~\ref{fig:task-mode}),
+and (ii) the end-horizon dashboard pressures $(H_{end},P_{end},R_{end},\mathrm{EnvExp}_{end},\mathrm{AttrExp}_{end})$ (Figure~\ref{fig:dashboard}).
+Task~2 converts these signals into actionable education policy through a single logic chain:
+\emph{observe signals} $\rightarrow$ \emph{make coupled macro--micro decisions} $\rightarrow$ \emph{set levers and governance} $\rightarrow$ \emph{re-simulate and recommend}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{task2.png}
+    \caption{Task mode evolution (curriculum scenario).}
+    \label{fig:task-mode}
+\end{figure}
+
+\subsection{A Macro--Micro Coupled Policy Lens}
+\label{subsec:task2_macro_micro}
+
+Education response is not a checklist; it is a coupled decision problem with two layers.
+\textbf{Macro} determines \emph{how many} graduates to produce (program size) and \emph{what type} of graduates to produce (training profile),
+while \textbf{Micro} specifies capability targets, curriculum/assessment design, and AI governance rules that keep learning and evaluation valid.
+We keep the coupling explicit: scale changes without a matching training profile either dilute quality (\texttt{grow}) or waste capacity (\texttt{shrink}).
+
+\paragraph{Signal-to-decision map.}
+Table~\ref{tab:task2_signal_map} makes the Task~1 $\rightarrow$ Task~2 evidence chain explicit, so that every recommendation can be traced back to a measurable model output.
+\begin{table}[H]
+\centering
+\caption{Task~1 signals and the corresponding Task~2 decision hooks.}
+\label{tab:task2_signal_map}
+\footnotesize
+\begin{tabular}{l p{5.0cm} p{6.8cm}}
+\hline
+\textbf{Signal} & \textbf{Meaning} & \textbf{Education response (macro/micro)} \\
+\hline
+$P_{end}$ & automation/collaboration pressure & raise $u_1$; shift assessment toward workflow competence and supervised use \\
+$R_{end}$ & safety/quality risk under over-release & raise $u_2$; require verification evidence; strengthen human-in-the-loop rules \\
+$\mathrm{AttrExp}_{end}$ & attribution/IP responsibility exposure & raise $u_4$; require provenance sheets, disclosure, and audits \\
+$\mathrm{EnvExp}_{end}$ & resource/compute exposure & raise $u_5$; enforce budgets, efficient workflows, and tool policies \\
+task modes & manual / co-pilot / autopilot split & defines ``teach \& test'' template and allowed AI use by task type \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Macro Layer: Program Size and Training Profile}
+\label{subsec:task2_macro}
+
+\paragraph{(1) Quantity decision: grow / hold / shrink.}
+To translate internal structure change into a scale recommendation, we combine an external labor baseline (employment, projected growth, annual openings)\textsuperscript{\cite{bls2024projections}} with a supply proxy (annual graduates $G$).
+Internally, automation pressure $P_{end}$ acts as a productivity proxy (output per worker), while risk exposure $R_{end}$ blocks adoption and reduces realized productivity.
+Over a 5-year horizon, we compute a productivity-adjusted openings proxy $\mathrm{openings}_h$ and a capped gap.
+Let $(E_0,g_{10},O)$ denote the external baseline (current employment, 10-year growth, annual openings), and let $h$ be the planning horizon (here $h=5$).
+We use a bounded ``realized productivity'' factor:
+\begin{align*}
+\mathrm{prod} &= 1 + p_{\max} P_{end}\bigl(1-b_R R_{end}\bigr),\qquad \mathrm{prod}\ge 1,\\
+E_1 &= \frac{E_0(1+g_h)}{\mathrm{prod}},\\
+\mathrm{openings}_h &= \max\!\left\{0,\;\left(O-\frac{E_0 g_{10}}{10}\right)+\frac{E_1-E_0}{h}\right\},
+\end{align*}
+where $g_h$ is the implied $h$-year growth from $g_{10}$.
+Then
+\[
+\mathrm{gap}=\mathrm{openings}_h - G,\qquad
+\Delta_{\max}=(0.35-0.15H_{end})\,G,\qquad
+\mathrm{gap}_{\text{capped}}=\mathrm{clip}(\mathrm{gap},-\Delta_{\max},\Delta_{\max}),
+\]
+then map it to \texttt{grow}/\texttt{hold}/\texttt{shrink}, where \texttt{hold} is a buffered ``near-zero'' band.
+The cap reflects that hands-on-heavy programs (higher $H_{end}$) change capacity more slowly due to facilities, apprenticeship slots, and safety constraints.
+Concretely, we assign \texttt{hold} when $|\mathrm{gap}_{\text{capped}}|\le \max\{1,0.05G\}$ and otherwise use the sign of $\mathrm{gap}_{\text{capped}}$ to choose \texttt{grow} vs.\ \texttt{shrink}.
+
+\paragraph{(2) Structure decision: training profile (what kind of graduate).}
+The same dashboard pressures define a training profile that remains meaningful regardless of whether a program grows or shrinks:
+\begin{itemize}
+  \item $R_{end}\uparrow \Rightarrow$ \textbf{reliability \& accountability} (verification, fault localization, sign-off boundaries).
+  \item $\mathrm{AttrExp}_{end}\uparrow \Rightarrow$ \textbf{provenance \& compliance} (licensing, disclosure, auditability).
+  \item $\mathrm{EnvExp}_{end}\uparrow \Rightarrow$ \textbf{resource discipline} (compute/energy budgets, efficient workflows).
+\end{itemize}
+This profile does not change the scale label; it specifies which capabilities must be protected when capacity shifts so that scale changes do not dilute outcomes.
+Operationally, the three pressures allocate emphasis across the corresponding levers $(u_2,u_4,u_5)$ and tighten governance in the same directions (verification evidence, provenance disclosure, and resource budgeting).
+
+\paragraph{Macro results: program size recommendations.}
+Applying the above procedure yields the following program-size recommendations for our three representative institutions:
+
+\begin{table}[H]
+\centering
+\caption{Program-size recommendations for representative institutions.}
+\label{tab:program-decisions}
+\begin{tabular}{l l l r}
+\toprule
+\textbf{Career} & \textbf{Program} & \textbf{Decision} & \textbf{Delta (\%/yr)} \\
+\midrule
+Electricians & Inside Wireman Apprenticeship & hold & -2.3 \\
+Graphic Designers & BFA in Graphic Design & shrink & -27.2 \\
+Software Developers & B.S.\ in Computer Science & shrink & -26.1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Micro Layer: Capability Targets $\rightarrow$ Levers $\rightarrow$ Governance-for-Learning}
+\label{subsec:task2_micro}
+
+\paragraph{(1) Capability targets from pressures and task modes.}
+We interpret the dashboard pressures as capability-gap signals, and use the task-mode split to decide how to teach and assess.
+Let $w_{\text{end}}$ denote the end-horizon takeover weight of a task.
+\begin{itemize}
+  \item \textbf{manual ($w_{\text{end}}\ge 0.7$):} preserve core human competence and responsibility boundaries.
+  \item \textbf{co-pilot ($0.3\le w_{\text{end}}<0.7$):} train supervision, verification, error detection, and communication under collaboration.
+  \item \textbf{autopilot ($w_{\text{end}}<0.3$):} train efficient but auditable use (provenance sheets and resource/iteration budgets).
+\end{itemize}
+
+\paragraph{(2) Curriculum levers as operational actions (and a 5-year tempo).}
+We express program actions in the five-lever control space $\mathbf u=[u_1,\dots,u_5]$ (Section~\ref{subsec:scenario_u}).
+Each lever reshapes effective parameters in the dynamics:
+$u_1$ increases $a_{\text{eff}}$ (AI literacy and tool fluency),
+$u_2$ reduces $r_{\text{eff}}$ (verification/safety training),
+$u_3$ reduces $\lambda_{\text{eff}}$ (reskilling infrastructure),
+$u_4$ reduces $A_{\text{eff}}$ (provenance/rights training),
+and $u_5$ reduces $E_{\text{eff}}$ (resource discipline).
+Priorities follow Task~1 signals: $R_{end}\uparrow \Rightarrow u_2$, $\mathrm{AttrExp}_{end}\uparrow \Rightarrow u_4$, $\mathrm{EnvExp}_{end}\uparrow \Rightarrow u_5$, while rapid structural change motivates $u_3$.
+To avoid one-shot reform, we also learn a year-by-year 5-year lever policy via PPO around the current curriculum levers, yielding an implementable reform schedule.
+
+\paragraph{From levers to auditable curriculum artifacts.}
+To ensure that ``levers'' correspond to implementable educational actions, we attach each lever to concrete teaching/assessment artifacts that can be checked by instructors and accreditors:
+\begin{itemize}
+  \item $u_1$ (AI literacy): reproducible workflow submissions (repo + changelog + run instructions) that demonstrate effective tool use without hiding core reasoning.
+  \item $u_2$ (verification/safety): a verification evidence pack (tests, counterexamples, checklists, failure analysis) for AI-assisted outputs.
+  \item $u_3$ (reskilling infrastructure): modular bridge maps (prerequisites, micro-credentials, transfer pathways) that reduce switching friction without lowering standards.
+  \item $u_4$ (attribution/IP): provenance sheets and licensing/compliance checklists attached to all major artifacts.
+  \item $u_5$ (sustainability): resource/iteration budgets (compute logs, iteration caps, efficiency reports) that make costs visible and enforceable.
+\end{itemize}
+
+\paragraph{(3) AI governance is for protecting learning \& assessment validity.}
+Without boundaries, students can outsource key cognitive steps to AI, producing strong artifacts but weak capability growth (assessment distortion).
+Therefore governance is written as executable rules aligned to the pressure signals:
+$R_{end}\uparrow$ strengthens human-in-the-loop requirements and verification evidence;
+$\mathrm{AttrExp}_{end}\uparrow$ requires provenance/disclosure (sources, licenses, tool and prompt logs);
+$\mathrm{EnvExp}_{end}\uparrow$ enforces resource budgets and tool policies (approved tools, iteration caps).
+At minimum, a compliant policy specifies: (i) what is allowed (drafting, debugging, ideation) vs.\ prohibited (untraceable generation for core competencies),
+(ii) what must be disclosed (tools/models, prompts/edits, external sources), (iii) what must be verified by humans (tests, measurements, design justifications),
+and (iv) what resource limits apply (budget ceilings and iteration caps).
+
+
+
+
+
+
+
+% =========================
+% 9.4 Project-level Recommendations (structured + compact bullets)
+% =========================
+\subsection{Project-level Recommendations: From Signals to Policy}
+This section does not repeat model derivations. Instead, we convert Task~1 structural signals
+(task modes: \textit{manual / co-pilot / autopilot} and pressure indicators such as automation pressure $P$,
+risk exposure $R$, attribution/IP exposure $\mathrm{AttrExp}$, and resource exposure $\mathrm{EnvExp}$)
+into a two-layer policy package:
+\begin{itemize}
+  \item \textbf{Macro (scale \& implementation):} program size and a feasible expand/contract mechanism under institutional constraints.
+  \item \textbf{Micro (capabilities \& governance):} capability targets, curriculum redesign, and governance-for-learning so learning remains valid and accountability is traceable.
+\end{itemize}
+Overall, we aim to elevate recommendations from ``a direct translation of model outputs'' to an \emph{auditable socio-technical intervention plan}.
+
+% -------------------------------------------------
+\subsubsection{Electrical Training Alliance (NECA/IBEW) --- Inside Wireman Apprenticeship (\textit{hold})}
+
+\noindent\textbf{Macro --- Decision: \textit{hold}.}
+\begin{itemize}
+  \item \textbf{Why hold (structural constraints):}
+  \begin{itemize}
+    \item \textbf{Accountability chain \& high externalities:} safety/compliance stakes make over-delegation to AI socially unacceptable.
+    \item \textbf{Hard capacity \& path dependence:} worksites, mentors, and apprenticeship slots cap how fast scale can change.
+    \item \textbf{Boundary-type AI gains:} AI helps documentation/search/diagnostics but does not change \emph{who operates} and \emph{who signs off}.
+  \end{itemize}
+  \item \textbf{How to implement hold:}
+  \begin{itemize}
+    \item \textbf{Keep baseline admissions stable} to protect safety and quality.
+    \item \textbf{Reserve an ``emergency expansion port''} via \textbf{short training + modular practicum} when openings surge, instead of inflating baseline admissions.
+  \end{itemize}
+\end{itemize}
+
+\noindent\textbf{Micro --- capabilities $\rightarrow$ curriculum $\rightarrow$ governance.}
+\begin{itemize}
+  \item \textbf{Micro objective:} train apprentices who can \emph{operate and take responsibility}, making \textbf{evidence-based accept/reject} decisions when facing AI suggestions.
+  \item \textbf{Capability targets:}
+  \begin{itemize}
+    \item \textbf{Standard-to-checklist competence} with step-wise justification.
+    \item \textbf{Evidence-based verification} (measurements/photos/records as a traceable chain).
+    \item \textbf{Digital work orders \& post-incident learning} (close rework/incident loops).
+    \item \textbf{Resource awareness} for field sustainability and compliant reporting.
+  \end{itemize}
+  \item \textbf{Curriculum adjustment (additive, not restructuring accountability):}
+  \begin{itemize}
+    \item Digital work orders with trace logging (standardized fields, versioning, timestamps, sign-offs).
+    \item Standards retrieval $\rightarrow$ checklist construction using realistic scenarios.
+    \item Diagnostic-assistance drills: treat AI outputs as hypotheses; validate with on-site evidence.
+  \end{itemize}
+  \item \textbf{AI-use governance (hard boundaries):}
+  \begin{itemize}
+    \item \textbf{Hard boundary:} safety/compliance sign-off and on-site critical operations remain human-executed and human-confirmed.
+    \item \textbf{Evidence requirement:} log each suggestion with \emph{accept/reject + evidence} in the work-order trail.
+    \item \textbf{Accountability assignment:} accountability remains within the apprentice--mentor chain (no blame shifting to the model).
+  \end{itemize}
+\end{itemize}
+
+% -------------------------------------------------
+\subsubsection{Rhode Island School of Design (RISD) --- BFA in Graphic Design (\textit{shrink})}
+
+\noindent\textbf{Macro --- Decision: \textit{shrink}.}
+\begin{itemize}
+  \item \textbf{Why shrink (value-structure shift):}
+  \begin{itemize}
+    \item Generative tools commoditize \textbf{execution-only production}, reducing labor per unit output.
+    \item The scarce frontier becomes \textbf{aesthetic judgment + curation/narrative + client communication + rights/attribution competence}.
+    \item Avoid \textbf{credential inflation}: stronger-looking portfolios with weaker judgment/legitimacy erode trust.
+  \end{itemize}
+  \item \textbf{How to implement shrink:}
+  \begin{itemize}
+    \item \textbf{Reduce intake gently} while concentrating resources on high-value capability modules.
+    \item Provide \textbf{redirect pathways} for surplus students: (i) delivery/product/business-communication design tracks; (ii) tech+design intersections (UX, prototyping, interaction).
+    \item Use \textbf{bridging courses} so transfers are not blocked by technical thresholds.
+  \end{itemize}
+\end{itemize}
+
+\noindent\textbf{Micro --- capabilities $\rightarrow$ curriculum $\rightarrow$ governance.}
+\begin{itemize}
+  \item \textbf{Micro objective:} upgrade ``can produce'' into ``can judge, narrate, and remain traceable and responsible.''
+  \item \textbf{Capability targets:}
+  \begin{itemize}
+    \item \textbf{Curatorial judgment} (selection with consistent rationale; enforce coherence).
+    \item \textbf{Client communication \& value articulation} (deliverable, negotiable solutions).
+    \item \textbf{Copyright/attribution competence} (licensing, provenance, declarations, risk recognition).
+    \item \textbf{Sustainable creative workflow} (iteration discipline, resource budgeting, lightweight tools).
+  \end{itemize}
+  \item \textbf{Curriculum adjustment:}
+  \begin{itemize}
+    \item \textbf{Provenance/authorization/declaration as core:} every portfolio artifact includes a provenance sheet (tools, sources, licenses, prompts, post-edit log).
+    \item \textbf{Human--AI co-creation critique studio:} critique methods, selection criteria, revision rationales, risk detection; grade primarily the \textbf{decision process}.
+    \item \textbf{Bridging modules:} data and tooling fundamentals for UX/interaction/product tracks.
+  \end{itemize}
+  \item \textbf{AI-use governance (legitimacy-first):}
+  \begin{itemize}
+    \item \textbf{Strong disclosure:} AI use must be traceable and reproducible (tools/versions, key prompts, sources, licenses, edit logs).
+    \item \textbf{No black-box finals:} non-traceable generations cannot be final deliverables.
+    \item \textbf{Governance as legitimacy training:} weight legal/ethical usability and public explanation alongside visual quality.
+  \end{itemize}
+\end{itemize}
+
+% -------------------------------------------------
+\subsubsection{Carnegie Mellon University --- B.S. in Computer Science (\textit{shrink})}
+
+\noindent\textbf{Macro --- Decision: \textit{shrink}.}
+\begin{itemize}
+  \item \textbf{Interpretation (address ``software is hot''):}
+  \begin{itemize}
+    \item Shrink does \emph{not} mean software is no longer needed.
+    \item It means \textbf{pure coding throughput} is amplified by AI tooling, lowering labor demand per unit output.
+    \item The scarce frontier is \textbf{accountable engineers} who can build, understand domains, and take responsibility under constraints.
+  \end{itemize}
+  \item \textbf{How to implement shrink:}
+  \begin{itemize}
+    \item Slightly reduce intake while shifting the center from ``writing code'' to ``accountable engineering.''
+    \item Convert part of capacity into \textbf{cross-disciplinary pipelines} (CS + policy/business/health/education) to strengthen domain understanding and responsibility boundaries.
+    \item Use a \textbf{redirect allocator} for surplus students into high-need applied tracks (security, data governance, engineering management), with bridging modules to reduce switching friction.
+  \end{itemize}
+\end{itemize}
+
+\noindent\textbf{Micro --- capabilities $\rightarrow$ curriculum $\rightarrow$ governance.}
+\begin{itemize}
+  \item \textbf{Micro objective:} train engineers who remain correct, compliant, and cost-disciplined even when AI participates in the workflow.
+  \item \textbf{Capability targets:}
+  \begin{itemize}
+    \item \textbf{Verification \& reliability} (testing, adversarial cases, failure analysis, release responsibility).
+    \item \textbf{Provenance \& compliance} (dependency origins, licensing, data governance, audit trails).
+    \item \textbf{Risk control} (safety boundaries, human review checkpoints, change management).
+    \item \textbf{Resource/cost discipline} (compute budgeting, efficiency metrics, sustainable computing awareness).
+  \end{itemize}
+  \item \textbf{Curriculum adjustment (three explicit cores + capstone):}
+  \begin{itemize}
+    \item \textbf{Verification science for AI-assisted development:} test evidence packs, counterexample libraries, post-mortems.
+    \item \textbf{Software provenance and license compliance:} provenance tracking, license-conflict checks, auditable commits.
+    \item \textbf{Resource-aware engineering:} inference cost accounting, caching/compression, iteration budgets, engineering KPIs.
+    \item \textbf{Cross-domain capstone:} make ``domain understanding + responsibility'' a graduation requirement.
+  \end{itemize}
+  \item \textbf{AI-use governance (learning validity):}
+  \begin{itemize}
+    \item \textbf{Allowed:} retrieval/drafting/templates/scaffolding.
+    \item \textbf{Mandatory disclosure:} tools/versions, key prompts, external sources, licenses, AI contribution share.
+    \item \textbf{Mandatory human verification:} critical design decisions, critical logic, pre-release validation.
+    \item \textbf{Validity rule:} without evidence packs / provenance tables / budget reports, submissions are capped at a passing grade.
+  \end{itemize}
+\end{itemize}
+
+
+
+
+
+
+
+
+
+%========================================================
+\subsection{Why These Recommendations Are Effective: Binding to Model Signals}
+\label{subsec:task2_why_effective}
+
+To keep the curriculum plan defensible, each recommendation is anchored to 1--2 model outputs:
+$P_{\text{end}}$ motivates workflow literacy ($u_1$);
+$R_{\text{end}}$ determines verification rigor and human-in-the-loop clauses ($u_2$);
+$\mathrm{AttrExp}_{\text{end}}$ determines whether provenance/IP becomes required ($u_4$);
+$\mathrm{EnvExp}_{\text{end}}$ determines whether compute/energy budgeting is enforced ($u_5$).
+Finally, the task-mode triad determines how ``teach and test'' are structured:
+manual (core competence and responsibility), co-pilot (supervision and verification), autopilot (efficient but auditable use).
+
+\paragraph{Closing the loop (deliverables).}
+Task~2 outputs three concrete deliverables that close the world--decision loop:
+(i) a program size label (\texttt{grow}/\texttt{hold}/\texttt{shrink});
+(ii) a 5-year lever path (PPO policy) that schedules reforms over 2026--2030;
+and (iii) executable AI governance boundaries (what is allowed, what must be disclosed, what must be verified by humans, and resource limits).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Task 3 --- Beyond Employability: Reweighting the Terrain}
+\label{sec:task3_beyond_employability}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{task3.png}
+    \caption{Task mode evolution (curriculum scenario).}
+    \label{fig:task-mode}
+\end{figure}
+\noindent In the workscape-terrain formulation, non-employability factors are not add-ons: they are explicit components of the terrain height $U_{\text{total}}$ (Section~\ref{subsec:model_development}). We map the required dimensions directly to existing variables:
+\begin{itemize}
+  \item \textbf{Sustainability:} $(U_{\text{env}},\, \mathrm{EnvExp})$ (the ``heat hill'').
+  \item \textbf{Attribution/IP:} $(U_{\text{attr}},\, \mathrm{AttrExp})$ (the ``toll wall'').
+  \item \textbf{Safety/quality:} $(U_{\text{safe}},\, R)$ (the ``safety cliff/guardrail'').
+\end{itemize}
+
+To reflect different societal priorities, we conduct preference-shift tests by increasing the corresponding weights (and/or tightening the soft-thresholds). In the metaphor, this steepens hills, raises walls, or tightens guardrails; the steering response is therefore predictable and transparent	.
+
+\subsection{Preference Shifts as Weight/Threshold Changes}
+\label{subsec:task3_preferences}
+
+In our formulation, ``beyond employability'' priorities enter the system through a small set of parameters that are easy to interpret and stress-test:
+the weights $(\beta,\kappa,\delta)$ that scale safety, sustainability, and attribution costs, and the soft-threshold locations $(\tau_{\text{env}},\tau_{\text{attr}})$ that determine when the ``walls'' activate (Section~\ref{sec:dynamics}).
+Increasing $\beta$ steepens the safety cliff; increasing $\kappa$ steepens the heat hill; increasing $\delta$ raises the toll wall.
+Lowering $\tau_{\text{env}}$ or $\tau_{\text{attr}}$ makes these constraints bind earlier (even for moderate AI share), while increasing $\eta_{\text{env}}$ or $\eta_{\text{attr}}$ makes the binding sharper.
+Because the education levers $\mathbf u$ act directly on effective parameters $(r_{\text{eff}},E_{\text{eff}},A_{\text{eff}})$, preference shifts translate into predictable changes in which levers dominate and how strict governance must be.
+
+\subsection{Stakeholder Scenarios and Expected Steering Responses}
+\label{subsec:task3_stakeholders}
+
+We summarize the qualitative effect of common stakeholder preferences below:
+\begin{center}
+\begin{tabular}{l l l}
+\hline
+\textbf{Preference focus} & \textbf{Model shift} & \textbf{Education response} \\
+\hline
+Safety-first & $\beta\uparrow$ (and stricter checks) & $u_2\uparrow$ + stronger human-in-the-loop evidence \\
+Rights-first & $\delta\uparrow$, $\tau_{\text{attr}}\downarrow$ & $u_4\uparrow$ + provenance disclosure and audits \\
+Climate/compute-first & $\kappa\uparrow$, $\tau_{\text{env}}\downarrow$ & $u_5\uparrow$ + compute/iteration budgets \\
+Productivity-first & $\alpha\uparrow$ (looser walls) & $u_1\uparrow$ with guardrails to prevent harm \\
+\hline
+\end{tabular}
+\end{center}
+
+Three robust implications follow:
+\begin{itemize}
+  \item \textbf{Higher safety priority:} prioritize $u_2$ and strengthen human-in-the-loop boundaries with evidence-based accept/reject rules, especially for co-pilot tasks where over-release is tempting.
+  \item \textbf{Higher attribution priority:} prioritize $u_4$ and enforce provenance disclosure (sources, licenses, contributions); untraceable submissions are invalid.
+  \item \textbf{Higher sustainability priority:} prioritize $u_5$ and enforce compute/iteration budgets and resource-aware tool choices; autopilot behavior becomes acceptable only when budgets and audits hold.
+\end{itemize}
+These scenarios do not require new narrative assumptions: they are implemented by reweighting or tightening existing terms in $U_{\text{total}}$ and re-running the same pipeline.
+
+\subsection{Beyond the Three Quantified Dimensions (Extensions)}
+\label{subsec:task3_extensions}
+
+Other dimensions (e.g., equity/access, privacy, mental health) are important but require stronger measurement assumptions than our current inputs support.
+In the terrain framework, they can be added either as additional exposure metrics (new ``walls'' with thresholds) or as capacity constraints on feasible policies (e.g., facility limits, supervision time, or privacy rules).
+We list them as extensions rather than implicit claims, keeping Task~3 auditable.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Task 4 --- Sensitivity, Transferability, and Robustness}
+\noindent Sensitivity tests are summarized in Section~\ref{sec:validation}. In this section we focus on two practical questions: whether the main conclusions are stable under reasonable perturbations, and what parts of the framework can be transferred to a new career or institution without rewriting the model.
+Robustness is assessed by re-running the same pipeline under multiple scenarios and perturbed coefficients/thresholds; the goal is not to claim a single ``true'' forecast, but to show that the direction of pressure and the recommended lever priorities are consistent.
+
+Transferability comes from the fact that our outputs are defined at the task level and then aggregated into a common dashboard. As long as a new occupation provides task descriptions and basic work-context signals, the same mapping produces comparable indicators $(H,P,R,\mathrm{EnvExp},\mathrm{AttrExp})$ and the same task-mode split.
+Likewise, education actions remain comparable because they live in the same five-lever space $\mathbf u\in[0,1]^5$, so curriculum and governance choices can be expressed and audited with the same interface.
+What does not transfer automatically is the external labor baseline: openings, growth, and the graduate-supply proxy are region- and cycle-dependent inputs that must be updated to obtain a meaningful scale recommendation. In addition, institution constraints (accreditation requirements, facilities, apprenticeship slots, budget limits) are program-specific; they should be reflected in scenario assumptions when interpreting lever paths and feasible speed of change.
+
+In practice, applying the framework elsewhere follows a simple workflow: provide a new occupation dataset and register the career--program mapping, set the baseline levers $\mathbf u$ and local labor inputs, and re-run the pipeline to regenerate dashboards, trajectories, and recommendations in the same output schema.
+
+
+\section{Model Evaluation and Further Discussion}  % 一级标题
+\paragraph{Strengths.}
+Our design favors transparency over maximum predictive ambition. The model starts from task-level mechanisms, makes each cost component explicit (efficiency pressure, safety/quality risk, sustainability exposure, and attribution/IP responsibility), and carries these terms consistently through simulation and policy evaluation. This yields outputs that are interpretable at multiple levels: a task-mode split for curriculum design, a compact dashboard for comparison across careers, and a small lever interface that turns recommendations into concrete actions.
+Equally important, the full pipeline is reproducible: given the same inputs (occupation tables, program levers, and labor baselines), it produces the same outputs and can be re-run under alternative scenarios or perturbed parameters. In the 5-year window, the policy-optimization routine learns a feasible year-by-year lever trajectory around current curricula, which aligns the narrative recommendations with an implementable reform tempo rather than a one-shot prescription.
+\paragraph{Limitations.}
+Several limitations follow from our emphasis on auditable structure. First, the driver mappings are proxies built from task text and structured context rather than ground-truth labels of ``AI share''; as a result, conclusions should be interpreted comparatively (direction and relative pressure) rather than as point forecasts. Second, program-size recommendations inherit uncertainty from the external labor baseline, which varies by region, business cycle, and how graduate supply is measured. Third, the evolution dynamics deliberately simplifies complex adoption and governance processes into a small number of terms; this supports clarity and sensitivity analysis, but it cannot capture all feedback loops (e.g., regulatory changes, sudden technology jumps, or institution-specific implementation frictions) without additional assumptions.
+\paragraph{Extensions.}
+The framework is designed to accept stronger evidence over time. When additional empirical signals are available (incident/near-miss records, auditing data for compute/resource usage, IP dispute statistics, or institution-level outcomes), the proxy mappings and weights can be calibrated while keeping the same interpretable structure. The model can also be extended to more careers and institutions by swapping input tables and updating local constraints, allowing the same ``dashboard + levers'' interface to support larger-scale comparisons and policy planning.
+	
+\section{Conclusions}  % 一级标题
+\noindent SPD-AutoDrive models each profession as a ``social autopilot'' system evolving on a constrained workscape, producing interpretable dashboards and policy levers. Across our three cases, Electricians remain predominantly hands-on (recommend \texttt{hold}), while Software Development and Graphic Design face productivity-driven supply pressure (recommend \texttt{shrink}) and should pivot training toward verification, provenance, and resource-aware workflows.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage  % 开始新的一页
+\nocite{*} 
+\printbibliography[heading=bibintoc]  % 打印引用文献列表
+
+\newpage  % 开始新的一页
+
+\section*{Report on Use of AI Tools}
+\vspace{0.5em}
+\noindent OpenAI \textit{ChatGPT} \textsuperscript{\cite{openai2025gpt5}} (Dec 2025 version, GPT-5.2)
+\begin{longtable}{|p{0.95\textwidth}|}
+\hline
+\rowcolor{querycolor}
+\textbf{Query1}: \textit{We need to collect the following categories of data: Employment and labor market data, AI impact assessment data, Task-level occupational data, Educational institution data, Industry trend reports. Where can we find these?} \\
+\hline
+\textbf{Output1}: Employment and Labor Market Data: We obtain employment statistics from the U.S. Bureau of Labor Statistics (BLS), specifically the Occupational Employment and Wage Statistics (OEWS) program and the Occupational Outlook Handbook. These sources provide current employment levels, median annual wages, wage percentiles, and projected employment change from 2024 to 2034 for hundreds of occupations. For our three selected careers—Software Developer, Electrician, and Graphic Designer—we extract data on total employment, industry distribution, and regional employment patterns to establish baseline workforce metrics.
+
+AI Impact Assessment Data: To quantify the potential disruption of Gen-AI on each occupation, we draw upon two landmark studies. The first is Frey and Osborne's 2013 paper "The Future of Employment: How Susceptible Are Jobs to Computerisation?", which provides automation probability scores for 702 occupations based on task characteristics. The second is OpenAI's 2023 research "GPTs are GPTs: An Early Look at the Labor Market Impact Potential of Large Language Models," which introduces the GPT exposure index measuring how much each occupation's tasks could be accelerated or replaced by large language models. Together, these datasets allow us to assess both traditional automation risk and emerging Gen-AI exposure.
+
+Task-Level Occupational Data: We utilize the O*NET\textsuperscript{\cite{onet2025database}} OnLine database, maintained by the U.S. Department of Labor, to analyze the granular composition of each occupation. O*NET\textsuperscript{\cite{onet2025database}} provides detailed ratings for knowledge requirements, skill demands, abilities, work activities, and specific tasks performed within each job. By examining which tasks are cognitive versus manual, routine versus non-routine, and creative versus analytical, we can model how Gen-AI will differentially impact various aspects of each profession and identify which competencies will remain valuable in an AI-augmented workplace.
+
+Educational Institution Data: For each of the three post-secondary institutions we selected—one university, one trade school, and one arts conservatory—we gather data from their official websites, academic catalogs, and institutional research offices. This includes program curricula and course descriptions, current enrollment figures and historical trends, faculty composition and specializations, tuition costs and financial aid availability, and graduate employment outcomes. These data inform our recommendations on how each institution should adapt its programs to prepare students for an AI-transformed labor market.
+
+Industry Trend Reports: To contextualize our analysis within broader workforce transformation patterns, we reference reports from leading research organizations. The World Economic Forum's "Future of Jobs Report" provides insights into emerging skills demands and declining job categories globally. McKinsey Global Institute publications offer projections on automation adoption timelines across industries. Additionally, we consult Brookings Institution research on AI's geographic and demographic impacts, as well as industry-specific reports from professional associations relevant to our three selected careers.
+\\
+\hline
+\rowcolor{querycolor}
+\textbf{Query2}: \textit{Write a Python script using matplotlib to create a horizontal bar chart visualization with three subplots side-by-side. Requirements: (1) Allow manual input of data dictionaries and color codes at the top of the script without hardcoding random data; (2) Automatically highlight the highest value in each subplot using a distinct "highlight color" while applying a "base color" to remaining bars; (3) Add numerical labels to the right of each bar for precise value display.} \\
+\hline
+\textbf{Output2}:
+
+\begin{lstlisting}[style=pythonstyle]
+import matplotlib.pyplot as plt
+
+# --- Manually entered data (to be filled by the team) ---
+# We input the TOPSIS calculation results here:
+stem_data = {'Software Development': 0.955, 'Computer Systems': 0.306, 
+    ...}
+trade_data = {'Electrical Engineering': 0.870, 'Carpentry': 0.739, 
+    ...}
+arts_data = {'Graphic Design': 1.000, 'Writer': 0.572, ...}
+
+# --- Style Configuration ---
+# Define specific colors to match the paper's theme
+highlight_color = '#FFB74D'   # Dark orange (for highest rating)
+base_colors = ['#FFF9C4', '#E0F2F1', '#F3E5F5']  # Pale yellow, mint
+    green, purple
+
+def plot_charts(datasets, colors):
+    fig, axes = plt.subplots(1, 3, figsize=(18, 6))
+    
+    for ax, data, base_col in zip(axes, datasets, colors):
+        names = list(data.keys())
+        scores = list(data.values())
+        
+        # Determine colors based on numerical values
+        max_val = max(scores)
+        bar_colors = [highlight_color if s == max_val else base_col 
+            for s in scores]
+        
+        # AI-generated plotting logic
+        bars = ax.barh(names, scores, color=bar_colors, edgecolor=
+            'black')
+        # ... (remaining plotting logic) ...
+
+# Execute plotting
+plot_charts([stem_data, trade_data, arts_data], base_colors)
+\end{lstlisting}
+\textbf{Verification and Modifications:}
+
+Since the AI-generated code provides only a structural template, we performed the following verifications and modifications before incorporating it into our workflow:
+
+\begin{enumerate}[leftmargin=1.5em, topsep=0.2em, itemsep=0.2em]
+    \item \textbf{Data Integrity and Visual Customization}
+    \item \textbf{Layout Adjustments and Output Validation}
+\end{enumerate}
+\\
+\hline
+\rowcolor{querycolor}
+\textbf{Query3}: \textit{From which analytical dimensions and theoretical perspectives can we comprehensively examine how the emergence and widespread adoption of Generative AI technologies will reshape the labor market, alter occupational demand patterns, and redefine the skill requirements for workers in STEM, Trade, and Arts professions?} \\
+\hline
+\textbf{Output3}:1. Task-Level Automation Potential. We examine each occupation at the granular task level rather than treating jobs as monolithic units. Using O\*NET's detailed task inventories, we classify work activities into categories such as cognitive-analytical, cognitive-creative, manual-routine, manual-non-routine, and interpersonal tasks. Gen-AI demonstrates varying capabilities across these categories—excelling at pattern recognition and content generation while struggling with physical manipulation and nuanced human interaction. By mapping each occupation's task composition against Gen-AI's current and projected capabilities, we can estimate the proportion of work hours susceptible to automation or augmentation.
+
+2. Skill Complementarity and Substitutability. We analyse whether the skills required for each profession are complementary to or substitutable by Gen-AI. Complementary skills—such as critical thinking, complex problem-solving, and emotional intelligence—become more valuable when paired with AI tools, as workers can leverage technology to amplify their productivity. Substitutable skills—such as routine data processing, basic content creation, and repetitive analysis—face displacement risk. This framework helps identify which workers will benefit from AI adoption and which may require reskilling.
+
+3. Industry Adoption Dynamics. We consider the pace and pattern of Gen-AI adoption across different sectors. Factors influencing adoption include: technological readiness of the industry, regulatory environment and compliance requirements, capital investment capacity, organizational culture and change management, and availability of AI-literate workforce. Industries with high digital maturity (e.g., technology, finance) will experience earlier and more profound transformation compared to sectors with physical constraints or regulatory barriers (e.g., construction, healthcare).
+
+4. Labor Market Demand Elasticity. We analyse how changes in productivity and cost structures affect overall employment demand. When Gen-AI increases worker productivity, two competing effects emerge: the displacement effect (fewer workers needed for the same output) and the productivity effect (lower costs stimulate demand expansion, potentially creating new jobs). The net employment impact depends on demand elasticity—whether the market absorbs increased output or simply reduces headcount. Historical evidence from previous automation waves suggests that new job categories often emerge, though with significant transition costs.
+
+5. Institutional and Policy Response. Finally, we examine how educational institutions, professional associations, and government policies mediate the labor market transition. Proactive institutional responses—such as curriculum modernization, lifelong learning programs, and portable credentialing systems—can accelerate worker adaptation. Conversely, rigid institutional structures may exacerbate skills mismatches and prolong unemployment during the transition period. Our model incorporates institutional adaptability as a key variable influencing career trajectory outcomes.
+By integrating these five analytical dimensions, our framework provides a holistic assessment of Gen-AI's labor market impact that goes beyond simplistic automation probability estimates to capture the complex, dynamic, and context-dependent nature of technological transformation.
+\\
+\hline
+\rowcolor{querycolor}
+\textbf{Query4}: \textit{ I have drafted a transitional paragraph, but I feel it lacks polish and academic sophistication. How can I rewrite it to achieve the following improvements: (1) enhance clarity by eliminating redundant or vague expressions; (2) strengthen the logical flow so that each sentence builds naturally upon the previous one; (3) adopt a more professional and formal tone suitable for a research paper; and (4) create a smooth narrative bridge that prepares readers for the discussion that follows without abrupt shifts in topic or style?} \\
+\hline
+\textbf{Output4}: To transform your transitional paragraph into a polished, academically sophisticated passage, I recommend applying the following revision strategies:
+
+\textbf{1. Enhancing Clarity by Eliminating Redundancy.} Review each sentence for unnecessary words or phrases that dilute your message. Replace vague expressions with precise, specific language. For example, instead of writing ``We looked at many different factors related to this issue,'' write ``We examined three key determinants: X, Y, and Z.'' Additionally, avoid nominalization---prefer active verbs over noun phrases.
+
+\textbf{2. Strengthening Logical Flow.} Ensure each sentence serves a clear purpose and connects logically to the next. A well-structured transitional paragraph typically follows this pattern:
+\begin{itemize}[leftmargin=1em, itemsep=0em, topsep=0em]
+    \item \textit{Sentence 1}: Briefly summarize what the previous section established
+    \item \textit{Sentence 2}: Identify the gap, question, or next step that naturally arises
+    \item \textit{Sentence 3}: Introduce what the upcoming section will address
+\end{itemize}
+Use transitional phrases strategically---not excessively. Effective connectors include ``Building upon this analysis,'' ``These findings motivate,'' ``To operationalize these insights,'' and ``We now turn to.''
+
+\textbf{3. Adopting a Professional Academic Tone.} Academic writing favors precision, objectivity, and measured confidence. Apply these principles:
+\begin{itemize}[leftmargin=1em, itemsep=0em, topsep=0em]
+    \item Replace informal expressions with formal alternatives
+    \item Use hedging language appropriately rather than overclaiming
+    \item Maintain consistent grammatical subjects throughout the paragraph
+    \item Prefer active voice for clarity while using passive voice selectively to emphasize results
+\end{itemize}
+
+\textbf{4. Creating a Smooth Narrative Bridge.} The most effective transitions accomplish two tasks simultaneously: they provide closure for the preceding section while generating momentum toward what follows. To achieve this:
+\begin{itemize}[leftmargin=1em, itemsep=0em, topsep=0em]
+    \item Echo a key term or concept from the previous section in your opening sentence
+    \item Frame the transition as a logical necessity rather than an arbitrary shift
+    \item End with a forward-looking statement that creates anticipation without revealing too much detail
+\end{itemize}
+\\
+\hline
+\end{longtable}
+
+\end{document}  % 文档结束
